@@ -10,6 +10,11 @@ class Quantity():
         self.type = q_type
         self.command = command
         self.data = None
+        
+        if command == True:
+            self.read_msg = self.name + "\r"
+        else:
+            self.read_msg = "expr {$Qu(" + self.name + ")}\r"
 
 class CarMaker():
     status_dic = {-1: "Preprocessing", -2: "Idle", -3: "Postprocessing", -4: "Model Check",
@@ -25,7 +30,6 @@ class CarMaker():
 
         self.socket = None
         self.quantities = []
-        self.read_msg = ""
 
         self.logger.debug("pycarmaker init completed")
 
@@ -41,13 +45,19 @@ class CarMaker():
         self.quantities.append(quantity)
 
         if quantity.command == True:
-            self.read_msg = self.read_msg + quantity.name + "\r"
             self.logger.info("Subscribe for command " + quantity.name + ": OK")
             return
 
-        exp = "expr {$Qu(" + quantity.name + ")}\r"
-        self.read_msg = self.read_msg + exp
-        msg = "QuantSubscribe {" + quantity.name + "}\r"
+        # Create message to subscribe to quantities with all quantities
+        # previous subscribed
+        msg = ""
+        for q in self.quantities:
+            if msg is "":
+                msg = q.name
+            else:
+                msg += " " + q.name
+        msg = "QuantSubscribe {" + msg + "}\r"
+        self.logger.debug(msg)
 
         if (self.socket == None):
             self.logger.error("Not connected")
@@ -60,19 +70,21 @@ class CarMaker():
         #TODO Handle error
 
     def read(self):
-        self.socket.send(self.read_msg.encode())
-        str_rx = self.socket.recv(300).decode()
-        rx_list = str_rx.split("\r\n\r\n")
-        self.logger.debug(rx_list)
+    
+        # By IPG recommendation, read one quantity at a time.
+        for quantity in self.quantities:
+            self.socket.send(quantity.read_msg.encode())
+            str_rx = self.socket.recv(300).decode()
+            rx_list = str_rx.split("\r\n\r\n")
+            self.logger.debug(rx_list)
 
-        if (len(rx_list) != len(self.quantities) + 1):
-            self.logger.error("Wrong read")
-            return
+            if (len(rx_list) != 2):
+                self.logger.error("Wrong read")
+                return
 
-        for data, qty in zip(rx_list, self.quantities):
-            if type(qty.type) == type(Quantity.FLOAT):
-                qty.data = float(data[1:])
-            elif type(qty.type) == type(Quantity.INT):
-                qty.data = int(data[1:])
+            if type(quantity.type) == type(Quantity.FLOAT):
+                quantity.data = float(rx_list[0][1:])
+            elif type(quantity.type) == type(Quantity.INT):
+                quantity.data = int(rx_list[0][1:])
             else:
                 self.logger.error("Unknwon type")
