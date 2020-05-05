@@ -2,7 +2,7 @@
 Class to control and read information from CarMaker (https://ipg-automotive.com/)
 
 ## How to install:
-'pip install -e .'
+`pip install -e . `
 
 ## How to use:
 ```python
@@ -47,4 +47,4 @@ while(c > 0):
                                    0 else cm.status_dic.get(sim_status.data)))
     time.sleep(1)
 
-'''
+```
