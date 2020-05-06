@@ -1,11 +1,11 @@
-import sys, os
+import sys
+import os
 import logging
 from types import *
 import time
 
 # Include CarMaker
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'pycarmaker'))
-from CarMaker import CarMaker, Quantity
+from pycarmaker import CarMaker, Quantity
 
 # Welcome message
 print("Ex 01 - Reading vehicle speed\r\n")
@@ -37,7 +37,7 @@ cm.connect()
 vehspd = Quantity("Car.v", Quantity.FLOAT)
 
 # Initialize with negative speed to indicate that value was not read
-vehspd.data = -1.0 
+vehspd.data = -1.0
 
 # Subscribe (TCP socket need to be connected)
 cm.subscribe(vehspd)
@@ -57,12 +57,13 @@ time.sleep(0.1)
 
 c = 5
 while(c > 0):
-    c = c- 1
+    c = c - 1
 
     # Read data from carmaker
     cm.read()
 
     print()
     print("Vehicle speed: " + str(vehspd.data * 3.6) + " km/h")
-    print("Simulation status: " + ("Running" if sim_status.data >= 0 else cm.status_dic.get(sim_status.data)))
+    print("Simulation status: " + ("Running" if sim_status.data >=
+                                   0 else cm.status_dic.get(sim_status.data)))
     time.sleep(1)
