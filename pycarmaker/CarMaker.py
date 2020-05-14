@@ -127,10 +127,16 @@ class VDS:
         lastdata = b''
         size = 0
         while(size != data_len):
-            data = self.socket.recv(64)
+            data = self.socket.recv(1024)
             try:
                 strdata = data.decode()
                 if strdata[0] == '*' and strdata[1] == 'V':
+                    splitdata = data.decode().split(" ")
+                    imgtype = splitdata[2]
+                    img_size = splitdata[4]
+                    data_len = int(splitdata[5])
+                    imag_h = int(img_size.split('x')[1])
+                    image_w = int(img_size.split('x')[0])
                     lastdata = b''
                     size = 0
                     continue
