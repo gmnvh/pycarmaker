@@ -110,6 +110,10 @@ class CarMaker():
         msg = "DVAWrite " + quantity.name + " " + \
             str(value)+" "+str(duration)+" "+mode+"\r"
         self.socket.send(msg.encode())
+        rsp = self.socket.recv(200)
+        rsp = rsp.decode().split("\r\n\r\n")
+        self.logger.info("Write quantity " +
+                         quantity.name + ": " + str(rsp))
 
     def DVA_release(self):
         """ Call this method when you are done using DVA """
