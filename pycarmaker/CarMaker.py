@@ -93,7 +93,7 @@ class CarMaker():
             else:
                 self.logger.error("Unknwon type")
 
-    def DVAWrite(self, quantity, value, duration=-1, mode="Abs"):
+    def DVA_write(self, quantity, value, duration=-1, mode="Abs"):
         """ set the value of a variable using DVAWrite <Name> <Value> <Duration> <Mode> ...
         Parameters
         ----------
@@ -110,6 +110,10 @@ class CarMaker():
         msg = "DVAWrite " + quantity.name + " " + \
             str(value)+" "+str(duration)+" "+mode+"\r"
         self.socket.send(msg.encode())
+
+    def DVA_release(self):
+        """ Call this method when you are done using DVA """
+        self.send("DVAReleaseQuants\r")
 
     def send(self, msg):
         """ send the giving message to CarMaker

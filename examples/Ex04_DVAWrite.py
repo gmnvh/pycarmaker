@@ -13,10 +13,17 @@ cm.connect()
 qbrake = Quantity("DM.Brake", Quantity.FLOAT)
 
 # 4 - Press the Brake
-cm.DVAWrite(qbrake, 1)
+cm.DVA_write(qbrake, 1)
+# cm.send("DVAReleaseQuants\r")
 
 # 5 - wait for 5 seconds
 time.sleep(5)
 
 # 6 - Release the Brake
-cm.DVAWrite(qbrake, 0)
+cm.DVA_write(qbrake, 0)
+
+# 7 - Wait for 5 seconds
+time.sleep(5)
+
+# 8 - Release the DVA
+cm.DVA_release()
