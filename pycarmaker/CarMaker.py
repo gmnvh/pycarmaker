@@ -127,6 +127,7 @@ class CarMaker():
             a string contains the message ending with \ r
         """
         self.socket.send(msg.encode())
+        return self.socket.recv(200)
 
 
 class VDS:
