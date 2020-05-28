@@ -93,6 +93,42 @@ class CarMaker():
             else:
                 self.logger.error("Unknwon type")
 
+    def DVA_write(self, quantity, value, duration=-1, mode="Abs"):
+        """ set the value of a variable using DVAWrite <Name> <Value> <Duration> <Mode> ...
+        Parameters
+        ----------
+        quant : Quantity
+            Quantity to set.
+        value : Float
+            New quantity value
+        duration : Float
+            Duration in milliseconds
+        mode : string
+            One of Abs, Off, Fac, AbsRamp, ...; default Abs(olute Value)
+        """
+
+        msg = "DVAWrite " + quantity.name + " " + \
+            str(value)+" "+str(duration)+" "+mode+"\r"
+        self.socket.send(msg.encode())
+        rsp = self.socket.recv(200)
+        rsp = rsp.decode().split("\r\n\r\n")
+        self.logger.info("Write quantity " +
+                         quantity.name + ": " + str(rsp))
+
+    def DVA_release(self):
+        """ Call this method when you are done using DVA """
+        self.send("DVAReleaseQuants\r")
+
+    def send(self, msg):
+        """ send the giving message to CarMaker
+        Paramters
+        ---------
+        msg : string
+            a string contains the message ending with \ r
+        """
+        self.socket.send(msg.encode())
+        return self.socket.recv(200)
+
 
 class VDS:
     def __init__(self, ip="localhost", port=2210, log_level=logging.INFO):
@@ -113,6 +149,15 @@ class VDS:
             self.connected = True
 
     def read(self):
+        """
+        Read the streamed images.
+
+        Returns
+        -------
+        img : numpy array
+            a numpy array representing the image
+
+        """
         if not self.connected:
             self.logger.error("Connect first by calling .connect()")
             return
