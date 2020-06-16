@@ -15,4 +15,4 @@ This example will connect to carmaker and read time and vehicle speed.
 
 # How to compile the code on Visual Studio 2019
 
-__add_here__
+https://youtu.be/2NYBEu6yNTk
