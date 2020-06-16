@@ -4,7 +4,7 @@ Class to control and read information from CarMaker (https://ipg-automotive.com/
 ## How to install:
 `pip install -e . `
 
-## How to use:
+## How to use CarMaker:
 ```python
 from pycarmaker import CarMaker, Quantity
 # 1 - Open CarMaker with option -cmdport
@@ -48,3 +48,45 @@ while(c > 0):
     time.sleep(1)
 
 ```
+
+## How to use VDS:
+
+1. First you need to create a VDS.cfg config file in Movie directory inside your project folder.
+    Example cfg:
+    ```
+    nViews 1
+    # First camera
+    0 {
+    Width 640
+    Height 480
+    Export {rgb}
+    VPtOffset_x 3.1
+    VPtOffset_y 0
+    VPtOffset_z 1.1
+    FrameRate 25
+    }
+    ```
+2. Run a Tes run and open IPGMovie.
+3. Launch the following script
+
+```python
+import cv2
+from pycarmaker import VDS
+
+# initalize VDS
+vds = VDS()
+# Connect
+vds.connect()
+# Read Images
+while(True):
+    # Capture frame-by-frame
+    frame = vds.read()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    # Display the resulting frame
+    cv2.imshow('Frame', frame)
+    # Press Q on keyboard to  exit
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+        break
+
+```
+
