@@ -55,8 +55,8 @@ if __name__ == "__main__":
             cm.read()
             print()
             print("Car speed: " + str(car_speed.data * 3.6) + " km/h")
-            print("Car Yaw: ") + str(car_yaw.data)
-            print("Steering Angle: ") + str(driver_steer.data)
+            print("Car Yaw: " + str(car_yaw.data))
+            print("Steering Angle: " + str(driver_steer.data))
             print("Simulation status: " + ("Running" if sim_status.data >=
                                            0 else cm.status_dic.get(sim_status.data)))
             floatmsg = Float32()
